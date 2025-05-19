@@ -20,4 +20,7 @@ https://x.com/i/grok/share/Z4Cxy97XDEjGbWMAnJEptkSln
 
 ### 2) I have a harvester cluster up and running and accessible under ip address 10.123.235.200/22. I want to deploy a 3 node kubernetes cluster running on virtual machines that uses hardware network interface from host in a pass through or a sriov virtual interface. I need a best known method to do it in an automated way, for example using ansible.
 
-
+https://x.com/i/grok/share/UZUEebJmIIqhEFdSZDUZYukDe
+"Ansible Script for PXE Boot via BMC LAN": https://x.com/i/grok/share/Z4Cxy97XDEjGbWMAnJEptkSln
+"Ansible Script for PXE Boot via BMC": https://x.com/i/grok/share/8dU03Skr2MCECoGw7SJsscXsC
+"Harvester Cluster Networking and Hugepages Setup": https://x.com/i/grok/share/uWufwtXjrgOg11yc3Q64qk9ke
