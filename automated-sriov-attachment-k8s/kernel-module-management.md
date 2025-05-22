@@ -37,6 +37,86 @@ WORKDIR /usr/src/custom-ice-driver
 CMD ["make", "-C", "/lib/modules/${KERNEL_VERSION}/build", "M=/usr/src/custom-ice-driver", "modules"]
 ```
 
+```Dockerfile
+# Another approach
+# Use SUSE SLE Micro base image compatible with Harvester 1.5.0
+FROM registry.suse.com/suse/sle-micro/5.5:latest
+
+# Install dependencies for building the ICE driver
+RUN zypper --non-interactive refresh && \
+    zypper --non-interactive install \
+    gcc \
+    make \
+    kernel-devel \
+    kernel-default-devel \
+    git \
+    wget \
+    tar \
+    gzip \
+    kmod \
+    patch && \
+    zypper --non-interactive clean
+
+# Set working directory
+WORKDIR /usr/src
+
+# Clone Intel ICE driver source (version 1.16.3)
+RUN git clone --branch ice-1.16.3 --single-branch https://github.com/intel/ethernet-linux-ice.git ice-1.16.3
+
+# Download and apply MTL patches
+RUN mkdir -p mtl_patches && \
+    wget -P mtl_patches https://github.com/OpenVisualCloud/Media-Transport-Library/raw/main/patches/ice_drv/1.16.3/0001-ice-add-support-for-AF_XDP.patch && \
+    wget -P mtl_patches https://github.com/OpenVisualCloud/Media-Transport-Library/raw/main/patches/ice_drv/1.16.3/0002-ice-fix-AF_XDP-ZC-performance-and-add-missing-statist.patch && \
+    wget -P mtl_patches https://github.com/OpenVisualCloud/Media-Transport-Library/raw/main/patches/ice_drv/1.16.3/0003-ice-add-AF_XDP-PTP-time-sync-support.patch
+
+# Apply patches to ICE driver source
+WORKDIR /usr/src/ice-1.16.3
+RUN for patch in /usr/src/mtl_patches/*.patch; do patch -p1 < "$patch"; done
+
+# Copy build script into container
+COPY build_ice_driver.sh /usr/src/ice-1.16.3/build_ice_driver.sh
+RUN chmod +x /usr/src/ice-1.16.3/build_ice_driver.sh
+
+# Set entrypoint to build script
+ENTRYPOINT ["/usr/src/ice-1.16.3/build_ice_driver.sh"]
+```
+
+### Build_ice_driver.sh:
+
+```shell
+#!/bin/bash
+
+#build_ice_driver.sh:
+# Set environment variables
+export KDIR=/lib/modules/$(uname -r)/build
+
+# Verify kernel headers
+if [ ! -d "$KDIR" ]; then
+    echo "Error: Kernel headers not found at $KDIR"
+    exit 1
+fi
+
+# Build the ICE driver
+cd /usr/src/ice-1.16.3/src
+make -C $KDIR M=$(pwd) modules
+
+# Install the driver
+make -C $KDIR M=$(pwd) modules_install
+
+# Update module dependencies
+depmod -a
+
+# Remove in-tree irdma driver to avoid symbol conflicts
+rm -f /lib/modules/$(uname -r)/kernel/drivers/infiniband/hw/irdma/irdma.ko*
+
+# Load the newly built ICE driver
+modprobe -r ice 2>/dev/null
+modprobe ice
+
+echo "ICE driver built and installed successfully."
+```
+
+
 ### Build and push to registry:
 
 ```shell
