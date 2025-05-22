@@ -37,6 +37,8 @@ WORKDIR /usr/src/custom-ice-driver
 CMD ["make", "-C", "/lib/modules/${KERNEL_VERSION}/build", "M=/usr/src/custom-ice-driver", "modules"]
 ```
 
+### Preparation of Dockerfile
+
 ```Dockerfile
 # Use SUSE SLE Micro base image compatible with Harvester 1.5.0
 FROM registry.suse.com/suse/sle-micro/5.5:latest
@@ -84,12 +86,12 @@ RUN chmod +x /usr/src/ice-1.16.3/build_ice_driver.sh
 ENTRYPOINT ["/usr/src/ice-1.16.3/build_ice_driver.sh"]
 ```
 
+
 ### Build_ice_driver.sh:
 
 ```shell
 #!/bin/bash
 
-#build_ice_driver.sh:
 # Set environment variables
 export KDIR=/lib/modules/$(uname -r)/build
 
@@ -103,8 +105,20 @@ fi
 cd /usr/src/ice-1.16.3/src
 make -C $KDIR M=$(pwd) modules
 
+# Check for build errors
+if [ $? -ne 0 ]; then
+    echo "Error: Failed to build ICE driver"
+    exit 1
+fi
+
 # Install the driver
 make -C $KDIR M=$(pwd) modules_install
+
+# Check for installation errors
+if [ $? -ne 0 ]; then
+    echo "Error: Failed to install ICE driver"
+    exit 1
+fi
 
 # Update module dependencies
 depmod -a
@@ -116,8 +130,18 @@ rm -f /lib/modules/$(uname -r)/kernel/drivers/infiniband/hw/irdma/irdma.ko*
 modprobe -r ice 2>/dev/null
 modprobe ice
 
-echo "ICE driver built and installed successfully."
+# Verify driver load
+if lsmod | grep -q ice; then
+    echo "ICE driver built and installed successfully."
+else
+    echo "Error: Failed to load ICE driver"
+    exit 1
+fi
 ```
+
+### After build is successfull, to build the driver:
+
+docker run --rm --privileged -v /lib/modules:/lib/modules ice-driver-build
 
 
 ### Build and push to registry:
