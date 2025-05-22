@@ -38,13 +38,16 @@ CMD ["make", "-C", "/lib/modules/${KERNEL_VERSION}/build", "M=/usr/src/custom-ic
 ```
 
 ```Dockerfile
-# Another approach
 # Use SUSE SLE Micro base image compatible with Harvester 1.5.0
 FROM registry.suse.com/suse/sle-micro/5.5:latest
 
+# Add SUSE SLE Micro 5.5 repositories
+RUN zypper --non-interactive addrepo --refresh http://download.opensuse.org/distribution/leap/15.5/repo/oss/ SLE_15_OSS && \
+    zypper --non-interactive addrepo --refresh http://download.opensuse.org/update/leap/15.5/sle/ SLE_15_Update && \
+    zypper --non-interactive --gpg-auto-import-keys refresh
+
 # Install dependencies for building the ICE driver
-RUN zypper --non-interactive refresh && \
-    zypper --non-interactive install \
+RUN zypper --non-interactive install \
     gcc \
     make \
     kernel-devel \
