@@ -459,6 +459,7 @@ Check pod logs for DPDK/GPU initialization errors.
 **Resource Names:** The resourceName in SriovNetworkNodePolicy and the resource name prefix used by the SR-IOV device plugin (e.g., intel.com/) combined with the policy's resourceName MUST match what pods request (intel.com/sriov_e810_net). This can be a common point of failure. Verify by checking node allocatable resources.
 This comprehensive setup is complex, and each step might require debugging and adjustment based on your exact driver patches, kernel versions, and operator versions. Start by getting each component working individually before combining them. The Intel operator documentation (especially for Ethernet and GPU) will be your best friend for specific CRD fields and behaviors.
 
+https://x.com/i/grok/share/xNAn2gNoNnD67yXkQBy3m4zO4
 
 
 
