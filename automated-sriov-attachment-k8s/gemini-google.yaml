@@ -1,3 +1,5 @@
+https://aistudio.google.com/app/prompts?state=%7B%22ids%22:%5B%2218N7fm39xWr_5_Knv2vS6KzG-goWcXy6O%22%5D,%22action%22:%22open%22,%22userId%22:%22109535256116166338809%22,%22resourceKeys%22:%7B%7D%7D&usp=sharing
+
 Okay, this is a comprehensive and advanced request! Let's break this down. Fully automating the *custom build and kernel module insertion* of DPDK and ICE drivers *from within Kubernetes manifests* is extremely challenging and generally not the recommended "best practice" due to the tight coupling with the host kernel and potential instability.
 
 The "best known method" typically involves:
