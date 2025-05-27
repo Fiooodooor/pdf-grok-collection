@@ -2,6 +2,8 @@
 
 ## "Deploying Ephemeral Kubernetes with SR-IOV on Harvester"
 
+grok: dpdk and ice https://x.com/i/grok/share/UXu9lXyTWK054ft2q7ek9plVC
+
 https://x.com/i/grok/share/UZUEebJmIIqhEFdSZDUZYukDe
 
 ### I) I have a Harvester Cluster, RKE2 up and running and accessible under ip address 10.123.235.200/22. I have also Rancher standalone deployed as well as Argo stack.
