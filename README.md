@@ -2,6 +2,8 @@
 
 ## "Deploying Ephemeral Kubernetes with SR-IOV on Harvester"
 
+https://x.com/i/grok/share/KoCL452AacnkadmQ1y1Xi8R2B
+
 grok: dpdk and ice https://x.com/i/grok/share/UXu9lXyTWK054ft2q7ek9plVC
 
 https://x.com/i/grok/share/UZUEebJmIIqhEFdSZDUZYukDe
